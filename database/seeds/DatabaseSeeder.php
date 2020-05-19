@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
+use App\Administrador;
+
+// Hace uso del modelo de Avion.
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
+        $this->call('AdministradoresSeeder');
+        $this->call('EmpleadosSeeder');
+        $this->call('ProductoSeeder');
+        $this->call('MesaSeeder');
+        $this->call('ClienteSeeder');
+        $this->call('FacturaSeeder');
+        $this->call('ComandaSeeder');
+
+
     }
 }

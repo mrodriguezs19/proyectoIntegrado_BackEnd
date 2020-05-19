@@ -15,5 +15,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user();  
 });
+Route::resource('administradores','AdministradorController');  
+Route::resource('empleados','EmpleadoController');
+Route::resource('mesas','MesaController');
+Route::resource('productos','ProductoController');
+Route::resource('clientes','ClienteController');
+Route::resource('facturas','FacturaController');
+Route::resource('comandas','ComandaController');
+Route::resource('productopedidos','ProductoPedidoController');
+
+
+
+
+
+
+
+
+
+    
