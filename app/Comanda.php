@@ -10,7 +10,7 @@ class Comanda extends Model
 	protected $table="comandas";
    
 
-	protected $fillable = array('id_empleado','id_cliente','id_factura');
+	protected $fillable = array('id_empleado','id_cliente','id_factura','estado','enviado');
 	
 	
 	public function empleados()

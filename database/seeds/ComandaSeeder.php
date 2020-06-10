@@ -36,7 +36,9 @@ class ComandaSeeder extends Seeder
                     'id'=>$faker->unique()->randomNumber($nbDigits = 4, $strict = false),
                     'id_cliente'=>$faker->randomElement($clientes),  
                     'id_factura'=>$faker->randomElement($facturas), 
-                    'id_empleado'=>$faker->randomElement($empleados),                
+                    'id_empleado'=>$faker->randomElement($empleados),
+                    'estado'=>$faker->randomElement(['enproceso','enviado']),              
+                
                                    
                ]
            );

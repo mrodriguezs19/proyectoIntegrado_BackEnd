@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Cache;
 
 class ProductoPedidoController extends Controller
 {
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,16 +24,14 @@ class ProductoPedidoController extends Controller
      */
     public function index()
     {
-        $productopedidos=Cache::remember('cacheproductopedido',15/60,function()
+        $productopedidos=Cache::remember('cacheaproductospedidos',15/60,function()
 		{
 			
-			return ProductoPedido::simplePaginate(20);  // Paginamos cada 10 elementos.
-
+			return ProductoPedido::all();  
 		});
 
 		
-		return response()->json(['status'=>'ok', 'siguiente'=>$productopedidos->nextPageUrl(),'anterior'=>$productopedidos->previousPageUrl(),'data'=>$productopedidos->items()],200);
-
+		return response()->json(['status'=>'ok','data'=>$productopedidos],200);
     }
 
     /**

@@ -10,22 +10,39 @@ use Illuminate\Support\Facades\Cache;
 
 class EmpleadoController extends Controller
 {
+
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
+
     /**
+     * 
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $empleados=Cache::remember('cacheempleado',15/60,function()
-		{
-			
-			return Empleado::simplePaginate(20);  // Paginamos cada 10 elementos.
+        
+        $consulta = Empleado::query();
 
-		});
+        
 
-		
-		return response()->json(['status'=>'ok', 'siguiente'=>$empleados->nextPageUrl(),'anterior'=>$empleados->previousPageUrl(),'data'=>$empleados->items()],200);
+        if ($request->filled('filter'))
+        {
+
+            $CamposFiltrados = array_filter(explode (',', $request->input('filter','')));        
+            foreach ($CamposFiltrados as $campoFiltro)
+
+            {
+                [$criterio,$valor] = explode(':',$campoFiltro);
+                $consulta->where($criterio, $valor);
+
+            }
+        
+        }
+        return response()->json(['status'=>'ok','data'=>$consulta->get()], 200);
 
     }
 

@@ -10,23 +10,36 @@ use Illuminate\Support\Facades\Cache;
 
 class ProductoController extends Controller
 {
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $productos=Cache::remember('cacheproducto',15/60,function()
-		{
-			
-			return Producto::simplePaginate(20);  // Paginamos cada 10 elementos.
+         
+        $consulta = Producto::query();
 
-		});
+        
 
-		
-		return response()->json(['status'=>'ok', 'siguiente'=>$productos->nextPageUrl(),'anterior'=>$productos->previousPageUrl(),'data'=>$productos->items()],200);
+        if ($request->filled('filter'))
+        {
 
+            $CamposFiltrados = array_filter(explode (',', $request->input('filter','')));        
+            foreach ($CamposFiltrados as $campoFiltro)
+
+            {
+                [$criterio,$valor] = explode(':',$campoFiltro);
+                $consulta->where($criterio, $valor);
+
+            }
+        
+        }
+        return response()->json(['status'=>'ok','data'=>$consulta->get()], 200);
     }
 
     /**
@@ -69,7 +82,7 @@ class ProductoController extends Controller
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json(['data'=>$nuevoProducto], 201)->header('Location',  url('/api').'/productos/'.$nuevoProducto->id);
+        return response()->json($nuevoProducto);
     }
 
     /**

@@ -14,21 +14,33 @@ class AdministradorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         
 			
-        $administradores=Cache::remember('cacheadministrador',15/60,function()
-		{
-			
-			return Administrador::simplePaginate(10);  // Paginamos cada 10 elementos.
+         
+        $consulta = Administrador::query();
 
-        });
         
 
-		
-		return response()->json(['status'=>'ok', 'siguiente'=>$administradores->nextPageUrl(),'anterior'=>$administradores->previousPageUrl(),'data'=>$administradores->items()],200);
-	
+        if ($request->filled('filter'))
+        {
+
+            $CamposFiltrados = array_filter(explode (',', $request->input('filter','')));        
+            foreach ($CamposFiltrados as $campoFiltro)
+
+            {
+                [$criterio,$valor] = explode(':',$campoFiltro);
+
+                if ($criterio=='email')
+                {$consulta->where($criterio,'LIKE', '%'.$valor.'%');}
+                else
+                {$consulta->where($criterio, $valor);}
+
+            }
+        
+        }
+        return response()->json(['status'=>'ok','data'=>$consulta->get()], 200);
     }
 
     /**
@@ -67,7 +79,8 @@ class AdministradorController extends Controller
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json(['data'=>$nuevoAdministrador], 201)->header('Location',  url('/api').'/administradores/'.$nuevoAdministrador->id);
+        return response()->json($nuevoAdministrador);    
+
     }
 
     /**

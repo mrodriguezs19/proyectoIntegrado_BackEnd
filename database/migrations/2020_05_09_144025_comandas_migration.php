@@ -15,6 +15,8 @@ class ComandasMigration extends Migration
     {
         Schema::create('comandas', function (Blueprint $table) {
             $table->increments('id');
+            $table->enum('estado',['enproceso','enviado']);
+            $table->enum('enviado',['si','no']);
             $table->integer('id_empleado')->unsigned();
             $table->foreign('id_empleado')->references('id')->on('empleados')->onDelete('cascade');
             $table->integer('id_cliente')->unsigned();

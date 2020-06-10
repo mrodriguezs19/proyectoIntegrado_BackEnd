@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Cache;
 
 class ComandaController extends Controller
 {
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,16 +23,15 @@ class ComandaController extends Controller
      */
     public function index()
     {
-        $comandas=Cache::remember('cachecomandas',15/60,function()
+        $comandas=Cache::remember('cachecomanda',15/60,function()
 		{
 			
-			return Comanda::simplePaginate(20);  // Paginamos cada 10 elementos.
+			return Comanda::all();  // Paginamos cada 10 elementos.
 
 		});
 
 		
-		return response()->json(['status'=>'ok', 'siguiente'=>$comandas->nextPageUrl(),'anterior'=>$comandas->previousPageUrl(),'data'=>$comandas->items()],200);
-
+		return response()->json(['status'=>'ok','data'=>$comandas],200);
     }
 
     /**
@@ -50,7 +53,7 @@ class ComandaController extends Controller
     public function store(Request $request)
     {
         
-        if ( !$request->input('id_cliente') || !$request->input('id_empleado') || !$request->input('id_factura'))
+        if ( !$request->input('id_cliente') || !$request->input('id_empleado') || !$request->input('id_factura') || !$request->input('estado')|| !$request->input('enviado'))
 		{
 			// Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
 			return response()->json(['errors'=>array(['code'=>422,'message'=>'Faltan datos necesarios para el proceso de alta.'])],422);
@@ -59,6 +62,7 @@ class ComandaController extends Controller
 		$cliente=Cliente::find($request->input('id_cliente'));
         $empleado=Empleado::find($request->input('id_empleado'));
         $factura=Factura::find($request->input('id_factura'));
+        
         // Si no existe el fabricante que le hemos pasado mostramos otro código de error de no encontrado.
         if (!$cliente)
         {
@@ -83,7 +87,7 @@ class ComandaController extends Controller
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json(['data'=>$nuevaComanda], 201)->header('Location',  url('/api').'/comandas/'.$nuevaComanda->id);
+        return response()->json($nuevaComanda);
     }
 
     /**
@@ -137,7 +141,8 @@ class ComandaController extends Controller
         $id_cliente=$request->input('id_cliente');
         $id_factura=$request->input('id_factura');
         $id_empleado=$request->input('id_empleado');
-        
+        $estado=$request->input('estado');
+        $enviado=$request->input('enviado');
 
         // Necesitamos detectar si estamos recibiendo una petición PUT o PATCH.
         // El método de la petición se sabe a través de $request->method();
@@ -162,8 +167,16 @@ class ComandaController extends Controller
                 $comanda->id_empleado = $id_empleado;
                 $bandera=true;
             }
-            
-
+            if ($estado)
+            {
+                $comanda->estado = $estado;
+                $bandera=true;
+            }
+            if ($enviado)
+            {
+                $comanda->enviado = $enviado;
+                $bandera=true;
+            }
             if ($bandera)
             {
                 // Almacenamos en la base de datos el registro.
@@ -180,7 +193,7 @@ class ComandaController extends Controller
 
 
         // Si el método no es PATCH entonces es PUT y tendremos que actualizar todos los datos.
-        if (!$id_cliente || !$id_empleado || !$id_factura )
+        if (!$id_cliente || !$id_empleado || !$id_factura || !$estado || !$enviado )
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['errors'=>array(['code'=>422,'message'=>'Faltan valores para completar el procesamiento.'])],422);
@@ -189,6 +202,8 @@ class ComandaController extends Controller
         $comanda->id_cliente = $id_cliente;
         $comanda->id_empleado = $id_empleado;
         $comanda->id_factura = $id_factura;
+        $comanda->estado = $estado;
+        $comanda->enviado = $enviado;
         
 
 

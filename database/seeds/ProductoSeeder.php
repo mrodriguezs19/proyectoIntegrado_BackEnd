@@ -27,7 +27,7 @@ class ProductoSeeder extends Seeder
                     'nombre'=>$faker->name(),                  
                    'precio'=>$faker->numberBetween($min = 1000, $max = 9000),
                     'tipo'=>$faker->randomElement(['racion','tapa','entrante','postre','bebida']),
-                    'especialidad'=>$faker->randomElement(['carne','pescado','vegetariano','alcohol','sinalcohol','postre']),
+                    'especialidad'=>$faker->randomElement(['carne','pescado','vegetariano','alcohol','sinalcohol','salado','dulce']),
                     'id_adm'=> $faker->randomElement($administradores),
                ]
            );

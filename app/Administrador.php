@@ -11,7 +11,8 @@ class Administrador extends Model
    
 
 	protected $fillable = array('usuario','nombre_completo','correo','contrasena');
-	
+	// Eliminamos el campo remember_token
+	protected $hidden = ['contrasena'];
   
 
 	public function empleados()
@@ -28,5 +29,10 @@ class Administrador extends Model
 	{	
 		
 		return $this->hasMany('App\Producto');
+	}
+	public function users()
+	{	
+		
+		return $this->hasOne('App\User');
 	}
 }

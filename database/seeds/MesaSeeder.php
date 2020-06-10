@@ -24,7 +24,7 @@ class MesaSeeder extends Seeder
             [
                 'id'=>$faker->unique()->randomNumber($nbDigits = 4, $strict = false),
                 'sillas'=>$faker->randomNumber($nbDigits = 2, $strict = false),
-                'estado'=>$faker->randomElement(['lleno','vacio']),
+                'estado'=>$faker->randomElement(['vacio']),
                 'id_adm'=> $faker->randomElement($administradores), 
             ] 
             );

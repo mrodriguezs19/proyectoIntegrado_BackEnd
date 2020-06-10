@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Cache;
 
 class ClienteController extends Controller
 {
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -17,16 +22,15 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $clientes=Cache::remember('cacheccliente',15/60,function()
+        $clientes=Cache::remember('cachecliente',15/60,function()
 		{
 			
-			return Cliente::simplePaginate(20);  // Paginamos cada 10 elementos.
+			return Cliente::all();  // Paginamos cada 10 elementos.
 
 		});
 
 		
-		return response()->json(['status'=>'ok', 'siguiente'=>$clientes->nextPageUrl(),'anterior'=>$clientes->previousPageUrl(),'data'=>$clientes->items()],200);
-
+		return response()->json(['status'=>'ok','data'=>$clientes],200); 
     }
 
     /**
@@ -68,8 +72,8 @@ class ClienteController extends Controller
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json(['data'=>$nuevoCliente], 201)->header('Location',  url('/api').'/mesa/'.$nuevoCliente->id);
-    }
+        return response()->json($nuevoCliente);
+        }
 
     /**
      * Display the specified resource.

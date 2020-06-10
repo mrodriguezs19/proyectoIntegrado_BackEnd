@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Cache;
 
 class FacturaController extends Controller
 {
+    public function __construct()
+    {
+         $this->middleware('auth.basic');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,16 +21,15 @@ class FacturaController extends Controller
      */
     public function index()
     {
-        $facturas=Cache::remember('cachefacturas',15/60,function()
+        $facturas=Cache::remember('cachefactura',15/60,function()
 		{
 			
-			return Factura::simplePaginate(20);  // Paginamos cada 10 elementos.
+			return Factura::all();  // Paginamos cada 10 elementos.
 
 		});
 
 		
-		return response()->json(['status'=>'ok', 'siguiente'=>$facturas->nextPageUrl(),'anterior'=>$facturas->previousPageUrl(),'data'=>$facturas->items()],200);
-
+		return response()->json(['status'=>'ok','data'=>$facturas],200);
     }
 
     /**
@@ -68,7 +71,7 @@ class FacturaController extends Controller
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json(['data'=>$nuevaFactura], 201)->header('Location',  url('/api').'/facturas/'.$nuevaFactura->id);
+        return response()->json($nuevaFactura);
     }
 
     /**
