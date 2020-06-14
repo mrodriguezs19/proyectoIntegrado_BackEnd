@@ -53,7 +53,7 @@ class ComandaController extends Controller
     public function store(Request $request)
     {
         
-        if ( !$request->input('id_cliente') || !$request->input('id_empleado') || !$request->input('id_factura') || !$request->input('estado')|| !$request->input('enviado'))
+        if ( !$request->input('id_cliente') || !$request->input('id_empleado') || !$request->input('id_factura')|| !$request->input('listo') || !$request->input('estado')|| !$request->input('enviado'))
 		{
 			// Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
 			return response()->json(['errors'=>array(['code'=>422,'message'=>'Faltan datos necesarios para el proceso de alta.'])],422);
@@ -142,6 +142,7 @@ class ComandaController extends Controller
         $id_factura=$request->input('id_factura');
         $id_empleado=$request->input('id_empleado');
         $estado=$request->input('estado');
+        $listo=$request->input('listo');
         $enviado=$request->input('enviado');
 
         // Necesitamos detectar si estamos recibiendo una petición PUT o PATCH.
@@ -172,6 +173,11 @@ class ComandaController extends Controller
                 $comanda->estado = $estado;
                 $bandera=true;
             }
+            if ($listo)
+            {
+                $comanda->listo = $listo;
+                $bandera=true;
+            }
             if ($enviado)
             {
                 $comanda->enviado = $enviado;
@@ -193,7 +199,7 @@ class ComandaController extends Controller
 
 
         // Si el método no es PATCH entonces es PUT y tendremos que actualizar todos los datos.
-        if (!$id_cliente || !$id_empleado || !$id_factura || !$estado || !$enviado )
+        if (!$id_cliente || !$id_empleado || !$id_factura || !$estado || !$enviado || !$listo )
         {
             // Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
             return response()->json(['errors'=>array(['code'=>422,'message'=>'Faltan valores para completar el procesamiento.'])],422);
@@ -204,7 +210,7 @@ class ComandaController extends Controller
         $comanda->id_factura = $id_factura;
         $comanda->estado = $estado;
         $comanda->enviado = $enviado;
-        
+        $comanda->listo = $listo;
 
 
         // Almacenamos en la base de datos el registro.

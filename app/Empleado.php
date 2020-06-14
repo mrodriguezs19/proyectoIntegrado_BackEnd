@@ -11,7 +11,8 @@ class Empleado extends Model
 
     
 	protected $fillable = array('dni','nombre_completo','correo','contrasena','sueldo','puesto','id_adm');
-	
+	protected $hidden = ['contrasena'];
+
 	public function administradores()
 	{	
 		

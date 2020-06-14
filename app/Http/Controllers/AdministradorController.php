@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
 use App\Administrador;
@@ -67,19 +68,26 @@ class AdministradorController extends Controller
 		Alcance */
 
 		// Primero comprobaremos si estamos recibiendo todos los campos.
-		if ( !$request->input('usuario') || !$request->input('nombre_completo') || !$request->input('correo') )
+		if ( !$request->input('usuario') || !$request->input('nombre_completo') || !$request->input('correo') || !$request->input('contrasena') )
 		{
 			// Se devuelve un array errors con los errores encontrados y cabecera HTTP 422 Unprocessable Entity – [Entidad improcesable] Utilizada para errores de validación.
 			return response()->json(['errors'=>array(['code'=>422,'message'=>'Faltan datos necesarios para el proceso de alta.'])],422);
-		}
+        }
+        $nuevoUsuario=new Administrador;
+        $nuevoUsuario->usuario=$request->input('usuario');
+        $nuevoUsuario->nombre_completo=$request->input('nombre_completo');
+        $nuevoUsuario->contrasena=$request->input('contrasena');
+        $nuevoUsuario->correo=$request->input('correo');
+		//$nuevoUsuario=User::create($request->all());
+        $nuevoUsuario->save();
+
 
 		
-		$nuevoAdministrador=Administrador::create($request->all());
 
 
         // Más información sobre respuestas en http://jsonapi.org/format/
         // Devolvemos el código HTTP 201 Created – [Creada] Respuesta a un POST que resulta en una creación. Debería ser combinado con un encabezado Location, apuntando a la ubicación del nuevo recurso.
-        return response()->json($nuevoAdministrador);    
+        return response()->json($nuevoUsuario);    
 
     }
 

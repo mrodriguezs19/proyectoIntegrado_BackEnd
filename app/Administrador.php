@@ -11,7 +11,6 @@ class Administrador extends Model
    
 
 	protected $fillable = array('usuario','nombre_completo','correo','contrasena');
-	// Eliminamos el campo remember_token
 	protected $hidden = ['contrasena'];
   
 

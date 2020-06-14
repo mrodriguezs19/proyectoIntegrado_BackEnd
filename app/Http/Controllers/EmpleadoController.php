@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Cache;
 class EmpleadoController extends Controller
 {
 
-    public function __construct()
-    {
-         $this->middleware('auth.basic');
-    }
+   
 
     /**
      * 

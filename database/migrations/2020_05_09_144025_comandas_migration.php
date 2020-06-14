@@ -17,6 +17,7 @@ class ComandasMigration extends Migration
             $table->increments('id');
             $table->enum('estado',['enproceso','enviado']);
             $table->enum('enviado',['si','no']);
+            $table->enum('listo',['si','no']);
             $table->integer('id_empleado')->unsigned();
             $table->foreign('id_empleado')->references('id')->on('empleados')->onDelete('cascade');
             $table->integer('id_cliente')->unsigned();
